@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Developer Journey Question",
+  "type": "object",
+  "required": [
+    "id",
+    "category",
+    "skill",
+    "level",
+    "difficulty",
+    "type",
+    "objective",
+    "question",
+    "answer",
+    "explanation",
+    "xp",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^DJ-[0-9]{6}$"
+    },
+    "category": {
+      "type": "string"
+    },
+    "skill": {
+      "type": "string"
+    },
+    "level": {
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "type": {
+      "enum": [
+        "multiple_choice",
+        "true_false",
+        "code_output",
+        "find_bug",
+        "fill_code",
+        "order_steps",
+        "match",
+        "code_review",
+        "scenario",
+        "terminal"
+      ]
+    },
+    "cognitive_level": {
+      "enum": [
+        "remember",
+        "understand",
+        "apply",
+        "analyze",
+        "evaluate",
+        "create"
+      ]
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 10
+    },
+    "question": {
+      "type": "string",
+      "minLength": 10
+    },
+    "code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2
+    },
+    "answer": {},
+    "explanation": {
+      "type": "string",
+      "minLength": 10
+    },
+    "common_mistake": {
+      "type": "string"
+    },
+    "recommended_practice": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "xp": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "estimated_time_seconds": {
+      "type": "integer",
+      "minimum": 5
+    },
+    "locale": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "draft_editorial_review",
+        "editorial_review",
+        "technical_review",
+        "approved",
+        "published",
+        "retired"
+      ]
+    },
+    "source": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

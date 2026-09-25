@@ -1,0 +1,54 @@
+{
+  "version": "2.0",
+  "question_count": 2200,
+  "level_distribution": {
+    "beginner": 880,
+    "intermediate": 880,
+    "advanced": 440
+  },
+  "category_distribution": {
+    "Fundamentos": 120,
+    "Lógica": 100,
+    "JavaScript": 180,
+    "TypeScript": 100,
+    "HTML": 70,
+    "CSS": 80,
+    "Git/GitHub": 120,
+    "Terminal/Linux": 100,
+    "Debugging": 120,
+    "HTTP/APIs": 120,
+    "SQL": 140,
+    "Banco de Dados": 90,
+    "Testes": 90,
+    "Clean Code": 70,
+    "Code Review": 70,
+    "Arquitetura": 70,
+    "Segurança": 80,
+    "Performance": 70,
+    "Python": 130,
+    "Estruturas de Dados e Algoritmos": 100,
+    "Docker/DevOps": 70,
+    "Comunicação": 50,
+    "Carreira e Rotina Dev": 60
+  },
+  "type_distribution": {
+    "multiple_choice": 910,
+    "scenario": 400,
+    "code_review": 860,
+    "true_false": 30
+  },
+  "difficulty_distribution": {
+    "1": 440,
+    "2": 440,
+    "3": 880,
+    "5": 149,
+    "4": 291
+  },
+  "files": {
+    "specification": "Developer_Journey_v2_completo.md",
+    "questions_json": "Developer_Journey_banco_2200_questoes.json",
+    "questions_csv": "Developer_Journey_banco_2200_questoes.csv",
+    "schema": "Developer_Journey_question_schema.json",
+    "validation_report": "Developer_Journey_relatorio_validacao.md"
+  }
+}

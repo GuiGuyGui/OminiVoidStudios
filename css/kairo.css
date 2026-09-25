@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Kairo — Cyberpunk / Deep Void Maintenance HUD
+   ========================================================================== */
+
+.kairo-wrapper {
+  max-width: 1100px;
+  margin: 40px auto 80px;
+  padding: 0 24px;
+}
+
+.kairo-container {
+  background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.08) 0%, rgba(13, 13, 26, 0.9) 80%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-xl);
+  padding: 50px 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.15), inset 0 0 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+}
+
+/* Sci-Fi HUD Corners */
+.kairo-container::before,
+.kairo-container::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ef4444;
+  pointer-events: none;
+}
+
+.kairo-container::before {
+  top: 16px;
+  left: 16px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.kairo-container::after {
+  bottom: 16px;
+  right: 16px;
+  border-left: none;
+  border-top: none;
+}
+
+.kairo-status-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.status-dot-pulse {
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ef4444;
+  animation: radarBlink 1.2s infinite;
+}
+
+@keyframes radarBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+.kairo-header {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 40px;
+}
+
+.kairo-title {
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+.kairo-tagline {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Reactor Core Animation */
+.reactor-core-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0 40px;
+  position: relative;
+}
+
+.reactor-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px dashed rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotateClockwise 20s linear infinite;
+  position: relative;
+}
+
+.reactor-inner {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotateCounter 12s linear infinite;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+}
+
+.reactor-symbol {
+  font-size: 2.2rem;
+  color: #ef4444;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes rotateClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateCounter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #ef4444); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #ef4444); }
+}
+
+/* Interactive Maintenance Terminal */
+.kairo-terminal-card {
+  background: #06060c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  margin-bottom: 40px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.terminal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot-red { background: #ef4444; }
+.dot-yellow { background: #f59e0b; }
+.dot-green { background: #10b981; }
+
+.terminal-logs {
+  height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #a1a1aa;
+}
+
+.log-line {
+  line-height: 1.4;
+}
+
+.log-prefix {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.log-time {
+  color: #64748b;
+  margin-right: 8px;
+}
+
+.log-success {
+  color: #10b981;
+}
+
+.log-info {
+  color: #06b6d4;
+}
+
+/* Notification & VIP Waitlist Form */
+.kairo-notify-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.notify-title {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.notify-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.notify-form {
+  display: flex;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.notify-input {
+  flex: 1;
+  background: rgba(10, 10, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.notify-input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-kairo {
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+  border-bottom: 3px solid #7f1d1d;
+}
+
+.btn-kairo:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.btn-kairo:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+@media (max-width: 640px) {
+  .notify-form {
+    flex-direction: column;
+  }
+}
