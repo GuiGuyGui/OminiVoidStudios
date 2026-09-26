@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Rush - Climb Together</title>
+    <link rel="stylesheet" href="css/style.css?v=8">
+    <style>
+        #hostToolbar, .host-command-dock, .host-dock-header, .host-dock-groups, .host-dock-group, .spotlight-card {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body>
+        <!-- Back to OmniVoid Hub Button -->
+        <a href="../index.html" class="btn-back-omnivoid" style="position: fixed; top: 14px; left: 14px; z-index: 9999; background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(8px); border: 1.5px solid #ffffff; color: #ffffff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.8); transition: all 0.2s ease;">
+            <span>🪐</span> OmniVoid Studios (Voltar)
+        </a>
+        
+    <div id="app">
+        <!-- Main Game Viewport Canvas -->
+        <div id="canvasContainer">
+            <canvas id="gameCanvas" tabindex="0"></canvas>
+        </div>
+
+        <!-- Left Sidebar (Logo, Room Code, Players, Chat, Exit Button) -->
+        <div id="leftSidebar">
+            <div class="logo-container">
+                <div class="game-logo-title">
+                    <span>☁️</span> SKY RUSH
+                </div>
+                <div class="game-logo-sub">CLIMB TOGETHER</div>
+            </div>
+
+            <!-- Room Code -->
+            <div class="room-header">
+                <span id="roomCodeDisplay" class="room-code-txt">Sala: ----</span>
+                <button id="btnCopyCode" class="btn-icon-copy" title="Copiar Código da Sala">📋</button>
+            </div>
+
+            <!-- Player List -->
+            <div class="players-section">
+                <div id="playerCount" class="players-count-label">Jogadores (0/50)</div>
+                <div id="playerList" class="player-list-scroll">
+                    <!-- Dynamic player entries populated by JS -->
+                </div>
+            </div>
+
+            <!-- In-Game Chat -->
+            <div class="chat-section">
+                <div id="chatMessages" class="chat-messages-container">
+                    <div class="chat-msg">
+                        <span class="chat-sender" style="color: #60a5fa;">Sistema:</span>
+                        <span class="chat-text">Bem-vindo ao Sky Rush! Suba até o topo!</span>
+                    </div>
+                </div>
+                <div class="chat-input-bar">
+                    <input type="text" id="chatInput" class="chat-input-field" placeholder="Digite uma mensagem..." maxlength="120">
+                    <button id="chatSendBtn" class="chat-send-btn">➤</button>
+                </div>
+            </div>
+
+            <!-- Leave Room Button -->
+            <button id="btnLeaveRoom" class="btn-leave-room">Sair da Sala</button>
+        </div>
+
+        <!-- Top Header (Timer) -->
+        <div id="topHeader">
+            <div class="timer-badge">
+                <span class="timer-label">TEMPO</span>
+                <span id="timerDisplay" class="timer-digits">10:00</span>
+            </div>
+        </div>
+
+
+        <!-- Auto Host 5s Player Spotlight Overlay Card -->
+        <div id="spotlightCard" class="spotlight-card" style="display: none;">
+            <div class="spotlight-top-badge">
+                <span class="spotlight-dot"></span>
+                <span>DESTAQUE CAOS IA (5s)</span>
+            </div>
+            <div class="spotlight-body">
+                <div class="spotlight-avatar-dot" id="spotlightAvatarDot"></div>
+                <div class="spotlight-details">
+                    <span id="spotlightPlayerName" class="spotlight-name">Jogador</span>
+                    <span id="spotlightPlayerAlt" class="spotlight-alt">0m de altitude</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Altitude Tracker & Controls) -->
+        <div id="rightSidebar">
+            <!-- Altitude Progress Tracker -->
+            <div class="altitude-card">
+                <div class="altitude-card-title">ALTURA</div>
+                <div id="altitudeTrack" class="altitude-track-container">
+                    <div class="altitude-end-label">🏁 Topo</div>
+                    <div class="altitude-track-line"></div>
+                    <div class="altitude-end-label">Início</div>
+                </div>
+            </div>
+
+            <!-- Controls Reference Card -->
+            <div class="controls-card">
+                <div class="controls-card-title">CONTROLES</div>
+                <div class="control-row">
+                    <span class="key-badge">A</span> <span class="key-badge">D</span>
+                    <span class="control-desc">Mover</span>
+                </div>
+                <div class="control-row">
+                    <span class="key-badge">W</span>
+                    <span class="control-desc">Pular (2x duplo)</span>
+                </div>
+                <div class="control-row">
+                    <span class="key-badge">ESPAÇO</span>
+                    <span class="control-desc">Cotovelada 💥</span>
+                </div>
+                <div class="control-row">
+                    <span class="key-badge">F / Clique</span>
+                    <span class="control-desc">Atirar 🔫</span>
+                </div>
+                <div class="control-row">
+                    <span class="key-badge">1 - 3</span>
+                    <span class="control-desc">Habilidades</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Player Skills Bar & Ammo HUD -->
+        <div id="skillBar">
+            <div id="ammoBadge" class="ammo-hud-card" title="Munição da Arminha da Cintura [Pressione F ou Clique para Atirar!]">
+                <span class="ammo-icon">🔫</span>
+                <div class="ammo-info">
+                    <span class="ammo-count" id="ammoCountDisplay">0</span>
+                    <span class="ammo-text">BALAS</span>
+                </div>
+            </div>
+            <div id="skill-btn-triple_jump" class="skill-btn" title="[1] Pulo Triplo: Impulso extra no ar">
+                <span class="skill-icon">🦘</span>
+                <span class="skill-key-hint">[1] Pulo Triplo</span>
+                <div id="skill-cd-triple_jump" class="skill-cooldown-overlay"></div>
+                <span id="skill-time-triple_jump" class="skill-cooldown-timer"></span>
+            </div>
+            <div id="skill-btn-ghost" class="skill-btn" title="[2] Fantasma: Atravessa jogadores e fica imune a empurrões">
+                <span class="skill-icon">👻</span>
+                <span class="skill-key-hint">[2] Fantasma</span>
+                <div id="skill-cd-ghost" class="skill-cooldown-overlay"></div>
+                <span id="skill-time-ghost" class="skill-cooldown-timer"></span>
+            </div>
+            <div id="skill-btn-balloon" class="skill-btn" title="[3] Balão: Queda suave planando no ar">
+                <span class="skill-icon">🎈</span>
+                <span class="skill-key-hint">[3] Balão</span>
+                <div id="skill-cd-balloon" class="skill-cooldown-overlay"></div>
+                <span id="skill-time-balloon" class="skill-cooldown-timer"></span>
+            </div>
+        </div>
+
+        <!-- Initial Lobby Modal (Create / Join Room) -->
+        <div id="lobbyModal" class="modal-overlay">
+            <div class="modal-card" style="max-width: 440px;">
+                <div class="modal-title">☁️ SKY RUSH ARCADE</div>
+                
+                <div class="input-group">
+                    <label class="input-label">Seu Nome / Apelido no Ranking:</label>
+                    <input type="text" id="nicknameInput" class="modal-input" placeholder="Ex: Seu Nome, Convidado..." maxlength="14" value="">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Escolha sua Cor:</label>
+                    <div class="color-picker-row">
+                        <div class="color-dot-choice active" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+                        <div class="color-dot-choice" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                        <div class="color-dot-choice" style="background-color: #10b981;" data-color="#10b981"></div>
+                        <div class="color-dot-choice" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                        <div class="color-dot-choice" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                        <div class="color-dot-choice" style="background-color: #ec4899;" data-color="#ec4899"></div>
+                        <div class="color-dot-choice" style="background-color: #06b6d4;" data-color="#06b6d4"></div>
+                        <div class="color-dot-choice" style="background-color: #64748b;" data-color="#64748b"></div>
+                        <div class="color-dot-choice" style="background-color: #1e293b;" data-color="#1e293b"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">🔫 Equipamento Inicial do Jogador:</label>
+                    <div class="bots-picker-row" id="weaponPickerRow" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <button type="button" class="bot-opt-btn weapon-opt active" data-weapon="shotgun" style="font-size: 11px;">💥 Escopeta (10 Tiros)</button>
+                        <button type="button" class="bot-opt-btn weapon-opt" data-weapon="ak47" style="font-size: 11px;">⚡ AK-47 (30 Tiros)</button>
+                        <button type="button" class="bot-opt-btn weapon-opt" data-weapon="pistol" style="font-size: 11px;">🔫 Pistola (15 Tiros)</button>
+                        <button type="button" class="bot-opt-btn weapon-opt" data-weapon="turbo" style="font-size: 11px;">🦘 Super Pulo Cósmico</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">🌪️ Caos Automático & Mutações de Mundo:</label>
+                    <div class="bots-picker-row" id="chaosPickerRow">
+                        <button type="button" class="bot-opt-btn chaos-opt active" data-chaos="fast" style="font-size: 11px;">🔥 Caos Total (Eventos a cada 12s)</button>
+                        <button type="button" class="bot-opt-btn chaos-opt" data-chaos="normal" style="font-size: 11px;">⚡ Moderado (20s)</button>
+                    </div>
+                </div>
+
+                <div class="modal-btn-row" style="flex-direction: column; gap: 10px; margin-top: 14px;">
+                    <button id="btnQuickPlay" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%); color: #05050a !important; font-size: 16px; font-weight: 900; padding: 14px 20px; box-shadow: 0 4px 20px rgba(0,240,255,0.4); text-transform: uppercase;">
+                        🚀 JOGAR SOLO AGORA
+                    </button>
+                    
+                    <!-- Collapsible Multiplayer Options -->
+                    <details style="width: 100%; font-size: 12px; color: #94a3b8; text-align: left; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 12px;">
+                        <summary style="cursor: pointer; font-weight: 700; color: #38bdf8;">🌐 Opções Avançadas / Multiplayer (Opcional)</summary>
+                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="roomCodeInput" class="modal-input" placeholder="Código da Sala (Ex: 7K3Q)" maxlength="6" style="text-transform: uppercase;">
+                            <div style="display: flex; gap: 8px;">
+                                <button id="btnCreateRoom" class="btn-secondary" style="flex: 1; font-size: 11px;">👑 Criar Sala</button>
+                                <button id="btnJoinRoom" class="btn-secondary" style="flex: 1; font-size: 11px;">🚪 Entrar na Sala</button>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pre-Game Waiting Room Lobby Modal -->
+        <div id="waitingLobbyModal" class="modal-overlay" style="display: none;">
+            <div class="modal-card lobby-card">
+                <div class="lobby-header-badge">
+                    <span class="lobby-badge-icon">⏳</span>
+                    <span>SALA DE ESPERA</span>
+                </div>
+
+                <div class="lobby-room-pill">
+                    <span class="lobby-code-label">CÓDIGO DA SALA:</span>
+                    <span id="lobbyRoomCode" class="lobby-code-val">----</span>
+                    <button id="lobbyCopyBtn" class="btn-copy-lobby" title="Copiar Link da Sala">📋 Copiar Link</button>
+                </div>
+
+                <div class="lobby-roster-title">JOGADORES CONECTADOS (<span id="lobbyPlayerCount">1</span>)</div>
+                <div id="lobbyPlayerRoster" class="lobby-roster-grid">
+                    <!-- Dynamic player chips populated by JS -->
+                </div>
+
+                <!-- Host Controls vs Guest Waiting Info -->
+                <div id="lobbyHostArea" style="display: none; width: 100%; margin-top: 16px;">
+                    <button id="btnLobbyStartGame" class="btn-primary btn-start-match">
+                        <span class="start-btn-icon">⚔️</span> INICIAR PARTIDA
+                    </button>
+                    <div class="lobby-host-hint">👑 Como Anfitrião, clique acima quando todos estiverem prontos!</div>
+                </div>
+
+                <div id="lobbyGuestArea" style="display: none; width: 100%; margin-top: 16px;">
+                    <div class="guest-waiting-box">
+                        <div class="pulse-spinner"></div>
+                        <span class="guest-waiting-text">Aguardando o Anfitrião iniciar a escalada...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opening Cinematic Intro (Challengers vs Evil Host) -->
+        <div id="cinematicOverlay" style="display: none;">
+            <div class="cinematic-letterbox top"></div>
+            <div class="cinematic-stage">
+                <!-- Top Cinematic Header -->
+                <div class="cinematic-title-banner">
+                    <span class="cinematic-flair">⚔️ A GRANDE ESCALADA ⚔️</span>
+                    <div class="cinematic-vs-text">OS DESAFIANTES <span class="vs-highlight">VS</span> O ANFITRIÃO MALIGNO</div>
+                </div>
+
+                <!-- Arena Showcase (Heroes vs Evil Boss) -->
+                <div class="cinematic-duel-container">
+                    <!-- Left: Heroes Squad -->
+                    <div class="cinematic-team heroes-team">
+                        <div class="team-bubble-hero" id="heroBubbleSpeech">"Vamos subir juntos até o cume! Ninguém fica para trás! 🚀"</div>
+                        <div class="team-label heroes-label">👥 OS DESAFIANTES</div>
+                        <div id="cinematicHeroesList" class="heroes-sprites-row">
+                            <!-- Populated with player avatars -->
+                        </div>
+                    </div>
+
+                    <!-- Center Clash Symbol -->
+                    <div class="cinematic-clash-symbol">
+                        <div class="clash-bolt">⚡</div>
+                        <span class="clash-text">VS</span>
+                    </div>
+
+                    <!-- Right: Evil Host Boss -->
+                    <div class="cinematic-team boss-team">
+                        <div class="team-bubble-boss" id="bossBubbleSpeech">"Vocês NUNCA alcançarão o cume do meu reino! Preparem-se para a queda! 😈"</div>
+                        <div class="boss-figure">
+                            <div class="boss-aura"></div>
+                            <div class="boss-avatar-box">
+                                <div class="boss-crown">👑</div>
+                                <div class="boss-body" id="bossAvatarBody">
+                                    <div class="boss-eyes"></div>
+                                    <div class="boss-cape"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-label boss-label" id="bossNameDisplay">👑 O ANFITRIÃO MALIGNO</div>
+                    </div>
+                </div>
+
+                <!-- Countdown / Start Banner -->
+                <div class="cinematic-countdown-banner">
+                    <div id="cinematicCountdownTxt" class="cinematic-countdown-num">3</div>
+                </div>
+
+                <!-- Skip Intro Button -->
+                <button id="btnSkipCinematic" class="btn-skip-cinematic">Pular Intro [ESC] ⏭️</button>
+            </div>
+            <div class="cinematic-letterbox bottom"></div>
+        </div>
+
+        <!-- Victory & Leaderboard Ranking Modal -->
+        <div id="victoryModal" class="modal-overlay" style="display: none;">
+            <div class="modal-card victory-card">
+                <div class="victory-icon">🏆</div>
+                <div class="modal-title" id="victoryModalTitle">FIM DE JOGO!</div>
+                <div>
+                    <span id="winnerNameDisplay" class="winner-name-highlight">Jogador</span>
+                    <p id="winnerSubtextDisplay" style="color: #94a3b8; margin-top: 6px;">Alcançou o cume da montanha!</p>
+                </div>
+
+                <!-- Match Final Rankings List -->
+                <div class="rankings-section">
+                    <div class="rankings-header-row">
+                        <span class="rankings-title">🏆 CLASSIFICAÇÃO FINAL</span>
+                        <span class="rankings-sub-info">ALTURA ALCANÇADA (MÁX 8.000M)</span>
+                    </div>
+                    <div id="victoryRankingList" class="rankings-list-scroll">
+                        <!-- Populated dynamically with ranked players -->
+                    </div>
+                </div>
+
+                <button class="btn-primary" style="margin-top: 16px;" onclick="window.location.reload();">🔄 Jogar Novamente</button>
+            </div>
+        </div>
+
+        <!-- Flashbang White Screen Overlay -->
+        <div id="flashbangOverlay" class="screen-fx-overlay flashbang-layer" style="display: none;"></div>
+
+        <!-- Matrix Slowmo Visual Filter Overlay -->
+        <div id="matrixOverlay" class="screen-fx-overlay matrix-layer" style="display: none;">
+            <div class="matrix-text-banner">⏱️ MODO MATRIX (0.3x VELOCIDADE)</div>
+        </div>
+
+        <!-- Cosmic Drunk Dizzy Indicator Overlay -->
+        <div id="drunkOverlay" class="screen-fx-overlay drunk-layer" style="display: none;">
+            <div class="drunk-banner">🪞 CONTROLES INVERTIDOS! (Esquerda ↔️ Direita) 💫</div>
+        </div>
+
+        <!-- Inverted World 180° Indicator Overlay -->
+        <div id="invertedWorldOverlay" class="screen-fx-overlay inverted-world-layer" style="display: none;">
+            <div class="inverted-world-banner">🙃 MUNDO INVERTIDO (180º)! TUDO DE CABEÇA PARA BAIXO! 🙃</div>
+        </div>
+
+        <!-- King of the Hill HUD Banner -->
+        <div id="kingOfHillBanner" class="king-hill-banner" style="display: none;">
+            <div class="king-badge-left">
+                <span class="king-crown-icon">👑</span>
+                <span class="king-title-txt">REI DA MONTANHA:</span>
+                <span id="kingNameTxt" class="king-name-txt">Jogador</span>
+                <span id="kingScoreBadge" class="king-score-badge">0 pts</span>
+            </div>
+            <div class="king-action-right">
+                <span class="ammo-unlimited-txt">🔫 MUNIÇÃO INFINITA! DERRUBEM O REI!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/audio.js?v=12"></script>
+    <script src="js/map.js?v=12"></script>
+    <script src="js/physics.js?v=12"></script>
+    <script src="js/player.js?v=12"></script>
+    <script src="js/host_powers.js?v=12"></script>
+    <script src="js/renderer.js?v=12"></script>
+    <script src="js/ui.js?v=12"></script>
+    <script src="js/main.js?v=12"></script>
+</body>
+</html>
